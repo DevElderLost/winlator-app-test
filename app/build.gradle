@@ -36,9 +36,9 @@ android {
     }
 
     packagingOptions {
-        jniLibs {
-            pickFirsts += "**/libFLAC.so"
-        }
+    jniLibs {
+        pickFirsts += "**/*.so"
+       }
     }
 }
 
