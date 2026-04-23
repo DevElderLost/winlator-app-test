@@ -9,6 +9,7 @@ import android.content.pm.PackageManager;
 import android.content.res.Configuration;
 import android.net.Uri;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.MenuItem;
 
 import androidx.annotation.IntRange;
@@ -25,11 +26,16 @@ import androidx.fragment.app.FragmentManager;
 import androidx.preference.PreferenceManager;
 
 import com.google.android.material.navigation.NavigationView;
+import com.winlator.container.ContainerManager;
 import com.winlator.contentdialog.AboutDialog;
+import com.winlator.contentdialog.SaveEditDialog;
+import com.winlator.contentdialog.SaveSettingsDialog;
 import com.winlator.core.AppUtils;
 import com.winlator.core.Callback;
 import com.winlator.core.LocaleHelper;
 import com.winlator.core.PreloaderDialog;
+import com.winlator.saves.Save;
+import com.winlator.saves.SaveManager;
 import com.winlator.xenvironment.RootFSInstaller;
 
 public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
@@ -39,6 +45,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     public static final byte OPEN_FILE_REQUEST_CODE = 2;
     public static final byte EDIT_INPUT_CONTROLS_REQUEST_CODE = 3;
     public static final byte OPEN_DIRECTORY_REQUEST_CODE = 4;
+    public static final byte OPEN_IMAGE_REQUEST_CODE = 5;
     private DrawerLayout drawerLayout;
     public final PreloaderDialog preloaderDialog = new PreloaderDialog(this);
     private boolean editInputControls = false;
@@ -46,6 +53,10 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     private Callback<Uri> openFileCallback;
     private SharedPreferences preferences;
     private Fragment currentFragment;
+    private SaveManager saveManager;
+    private ContainerManager containerManager;
+    private SaveSettingsDialog saveSettingsDialog;
+    private SaveEditDialog saveEditDialog;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -62,6 +73,10 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         actionBar.setDisplayHomeAsUpEnabled(true);
 
         preferences = PreferenceManager.getDefaultSharedPreferences(this);
+
+        // Initialize SaveManager and ContainerManager
+        saveManager = new SaveManager(this);
+        containerManager = new ContainerManager(this);
 
         Intent intent = getIntent();
         editInputControls = intent.getBooleanExtra("edit_input_controls", false);
@@ -114,6 +129,14 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 openFileCallback = null;
             }
         }
+        else if (saveSettingsDialog != null && saveSettingsDialog.isShowing()) {
+            Log.d("MainActivity", "Forwarding result to SaveSettingsDialog");
+            saveSettingsDialog.onActivityResult(requestCode, resultCode, data);
+        }
+        else if (saveEditDialog != null && saveEditDialog.isShowing()) {
+            Log.d("MainActivity", "Forwarding result to SaveEditDialog");
+            saveEditDialog.onActivityResult(requestCode, resultCode, data);
+        }
     }
 
     @Override
@@ -162,6 +185,21 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             itemId == R.id.menu_item_new_folder) {
             return super.onOptionsItemSelected(menuItem);
         }
+        else if (itemId == R.id.saves_menu_add) {
+            // Check if we are editing an existing save
+            int editSaveId = getIntent().getIntExtra("edit_save_id", -1);
+            Save saveToEdit = editSaveId >= 0 ? saveManager.getSaveById(editSaveId) : null;
+
+            if (saveToEdit != null) {
+                if (saveEditDialog != null && saveEditDialog.isShowing()) saveEditDialog.dismiss();
+                showSaveEditDialog(saveToEdit);
+            }
+            else {
+                saveSettingsDialog = new SaveSettingsDialog(this, saveManager, containerManager);
+                saveSettingsDialog.show();
+            }
+            return true;
+        }
         else {
             if (editInputControls) {
                 setResult(RESULT_OK);
@@ -200,6 +238,9 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             case R.id.menu_item_settings:
                 showFragment(new SettingsFragment());
                 break;
+            case R.id.menu_item_saves:
+                showFragment(new SavesFragment());
+                break;
             case R.id.menu_item_about:
                 (new AboutDialog(this)).show();
                 break;
@@ -215,5 +256,23 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
         drawerLayout.closeDrawer(GravityCompat.START);
         currentFragment = fragment;
+    }
+
+    /** Show SaveEditDialog untuk mengedit save yang sudah ada. */
+    public void showSaveEditDialog(Save saveToEdit) {
+        saveEditDialog = new SaveEditDialog(this, saveManager, containerManager, saveToEdit);
+        saveEditDialog.show();
+    }
+
+    /** Dipanggil setelah save baru berhasil ditambahkan — refresh SavesFragment jika aktif. */
+    public void onSaveAdded() {
+        if (currentFragment instanceof SavesFragment) {
+            ((SavesFragment) currentFragment).refreshSavesList();
+        }
+    }
+
+    /** Navigasi langsung ke SavesFragment. */
+    public void showSavesFragment() {
+        showFragment(new SavesFragment());
     }
 }
