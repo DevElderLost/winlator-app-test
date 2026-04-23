@@ -350,7 +350,7 @@
     <string name="saves">Save Manager</string>
     <string name="original_save_path">Original Save Path</string>
     <string name="save_title">Save Editor</string>
-    <string name="save_title">Save Settings</string>
+    <string name="save_settings_dialog">Save Settings</string>
     <string name="select_save_path">Select Save Path</string>
     <string name="save_path">Save Path</string>
     <string name="no_items_to_display_saves">Save Not Found</string>
