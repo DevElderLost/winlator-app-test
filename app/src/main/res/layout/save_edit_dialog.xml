@@ -15,8 +15,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/save_title"
-            android:textColor="?attr/colorPrimaryText"
-            android:textSize="16sp" />
+            android:textSize="16sp" /> <!-- Adjusted text size -->
 
         <EditText
             android:id="@+id/ETTitle"
@@ -49,8 +48,8 @@
             android:layout_marginBottom="8dp"
             android:padding="4dp"
             android:text="@string/original_save_path"
-            android:textColor="?attr/colorSecondaryText"
-            android:textSize="14sp" />
+            android:textColor="@color/colorPrimary"
+            android:textSize="14sp" /> <!-- Adjusted text size -->
 
         <!--
         <TextView

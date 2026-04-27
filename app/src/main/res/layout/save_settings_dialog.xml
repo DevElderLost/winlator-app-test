@@ -15,7 +15,6 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/save_title"
-            android:textColor="?attr/colorPrimaryText"
             android:textSize="16sp" />
 
         <EditText
@@ -31,7 +30,6 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/container"
-            android:textColor="?attr/colorPrimaryText"
             android:textSize="16sp" />
 
         <!-- Spinner + ImageButton secara horizontal -->
@@ -58,7 +56,6 @@
                 android:background="?attr/selectableItemBackgroundBorderless"
                 android:contentDescription="@string/select_save_path"
                 android:src="@drawable/icon_settings"
-                android:tint="?attr/colorPrimaryVariant"
                 android:scaleType="centerInside"
                 android:padding="8dp" />
 
@@ -71,7 +68,7 @@
             android:layout_marginBottom="8dp"
             android:padding="4dp"
             android:text="@string/save_path"
-            android:textColor="?attr/colorSecondaryText"
+            android:textColor="@color/black"
             android:textSize="14sp"
             android:visibility="gone" />
 

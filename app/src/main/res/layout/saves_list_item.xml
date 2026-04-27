@@ -15,8 +15,7 @@
         android:layout_marginRight="16dp"
         android:layout_marginTop="8dp"
         android:layout_marginBottom="8dp"
-        android:tint="?attr/colorPrimaryVariant"
-        android:src="@drawable/icon_save" />
+        android:src="@drawable/icon_save" /> <!-- Update this to your save icon -->
 
     <!-- Vertical LinearLayout to hold the title and subtext -->
     <LinearLayout
@@ -33,7 +32,7 @@
             android:maxLines="1"
             android:textSize="16sp"
             android:textStyle="bold"
-            android:textColor="?attr/colorPrimaryText"/>
+            android:textColor="@color/colorPrimaryDark"/>
 
         <TextView
             android:id="@+id/TVContainerName"
@@ -42,7 +41,7 @@
             android:ellipsize="end"
             android:maxLines="1"
             android:textSize="14sp"
-            android:textColor="?attr/colorSecondaryText" />
+            android:textColor="@android:color/darker_gray" />
 
     </LinearLayout>
 
